@@ -9,6 +9,7 @@ A comprehensive Python toolkit for dimension reduction techniques including t-SN
   - t-Distributed Stochastic Neighbor Embedding (t-SNE)
   - Uniform Manifold Approximation and Projection (UMAP)
   - Autoencoder-based dimension reduction
+  - more to add
 
 - **Comprehensive Benchmarking**:
   - Preservation of local and global structure
