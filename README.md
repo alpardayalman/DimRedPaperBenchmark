@@ -6,6 +6,8 @@ A comprehensive Python toolkit for dimension reduction techniques including t-SN
 
 - **Multiple Dimension Reduction Algorithms**:
   - Principal Component Analysis (PCA)
+  - Kernel PCA
+  - Sparse PCA
   - t-Distributed Stochastic Neighbor Embedding (t-SNE)
   - Uniform Manifold Approximation and Projection (UMAP)
   - Autoencoder-based dimension reduction
