@@ -5,19 +5,18 @@ A comprehensive Python toolkit for dimension reduction techniques including t-SN
 ## Features
 
 - **Multiple Dimension Reduction Algorithms**:
-  - Principal Component Analysis (PCA)
-  - Kernel PCA
-  - Sparse PCA
-  - t-Distributed Stochastic Neighbor Embedding (t-SNE)
-  - Uniform Manifold Approximation and Projection (UMAP)
-  - Autoencoder-based dimension reduction
-  - Kernel PCA
-  - ISOMAP
-  - LLE (Locally Linear Embedding )
-  - Laplacian Eigenmap
-  - LPP ( Local Preserving Projection)
-  - VAE
-  - more to add
+  - **Linear Methods**:
+    - Principal Component Analysis (PCA)
+    - Kernel PCA (RBF, polynomial, sigmoid kernels)
+  - **Manifold Learning**:
+    - t-Distributed Stochastic Neighbor Embedding (t-SNE)
+    - Uniform Manifold Approximation and Projection (UMAP)
+    - ISOMAP (Isometric Mapping)
+    - Locally Linear Embedding (LLE)
+    - Laplacian Eigenmaps
+  - **Deep Learning**:
+    - Autoencoder-based dimension reduction
+    - Variational Autoencoder (VAE)
 
 - **Comprehensive Benchmarking**:
   - Preservation of local and global structure
@@ -105,9 +104,14 @@ src/
 │   ├── __init__.py
 │   ├── base.py              # Base classes and interfaces
 │   ├── pca.py               # PCA implementation
+│   ├── kernel_pca.py        # Kernel PCA implementation
 │   ├── tsne.py              # t-SNE implementation
 │   ├── umap.py              # UMAP implementation
+│   ├── isomap.py            # ISOMAP implementation
+│   ├── lle.py               # Locally Linear Embedding
+│   ├── laplacian_eigenmap.py # Laplacian Eigenmaps
 │   ├── autoencoder.py       # Autoencoder implementation
+│   ├── vae.py               # Variational Autoencoder
 │   └── cli.py               # Command-line interface
 ├── benchmarking/
 │   ├── __init__.py
@@ -189,6 +193,75 @@ global_quality = structure_metrics.global_structure_preservation(X, embeddings)
 # Custom clustering analysis
 clustering_metrics = ClusteringQuality()
 silhouette_scores = clustering_metrics.silhouette_analysis(embeddings, y)
+```
+
+### Advanced Dimension Reduction Methods
+
+The toolkit now includes several advanced dimension reduction algorithms:
+
+#### Kernel PCA
+```python
+# Non-linear PCA using different kernel functions
+kpca_rbf = reducer.fit_transform(X, method='kernel_pca', kernel='rbf', gamma=0.1)
+kpca_poly = reducer.fit_transform(X, method='kernel_pca', kernel='poly', degree=3)
+```
+
+#### Manifold Learning
+```python
+# ISOMAP - preserves geodesic distances
+isomap_result = reducer.fit_transform(X, method='isomap', n_neighbors=10)
+
+# Locally Linear Embedding - preserves local neighborhood relationships
+lle_result = reducer.fit_transform(X, method='lle', n_neighbors=10, reg=1e-3)
+
+# Laplacian Eigenmaps - spectral embedding based on graph Laplacian
+le_result = reducer.fit_transform(X, method='laplacian_eigenmap', n_neighbors=10)
+```
+
+#### Deep Learning Methods
+```python
+# Variational Autoencoder with custom architecture
+vae_result = reducer.fit_transform(
+    X, 
+    method='vae', 
+    hidden_dims=[128, 64], 
+    epochs=100, 
+    batch_size=32
+)
+
+# Autoencoder with custom parameters
+ae_result = reducer.fit_transform(
+    X, 
+    method='autoencoder', 
+    hidden_dims=[128, 64], 
+    epochs=100
+)
+```
+
+### Algorithm Comparison
+
+```python
+# Compare all available methods
+methods = ['pca', 'kernel_pca', 'isomap', 'lle', 'laplacian_eigenmap', 'tsne', 'umap', 'vae']
+results = reducer.compare_methods(X, methods=methods, n_components=2)
+
+# Get detailed comparison with custom parameters
+method_params = {
+    'kernel_pca': {'kernel': 'rbf', 'gamma': 0.1},
+    'isomap': {'n_neighbors': 15},
+    'lle': {'n_neighbors': 15, 'reg': 1e-2},
+    'laplacian_eigenmap': {'n_neighbors': 15, 'affinity': 'rbf'},
+    'tsne': {'perplexity': 30, 'n_iter': 1000},
+    'umap': {'n_neighbors': 15, 'min_dist': 0.1},
+    'vae': {'epochs': 50, 'batch_size': 64}
+}
+
+detailed_results = reducer.compare_methods(
+    X, 
+    methods=methods, 
+    n_components=2, 
+    method_params=method_params
+)
 ```
 
 ## Contributing
