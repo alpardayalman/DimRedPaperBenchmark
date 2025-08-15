@@ -7,6 +7,11 @@ from .pca import PCA
 from .tsne import TSNE
 from .umap import UMAP
 from .autoencoder import AutoencoderReducer
+from .kernel_pca import KernelPCA
+from .lle import LLE
+from .vae import VAEReducer
+from .isomap import ISOMAP
+from .laplacian_eigenmap import LaplacianEigenmap
 
 if TYPE_CHECKING:
     from numpy.typing import NDArray
@@ -29,7 +34,12 @@ class DimensionReducer:
             'pca': PCA,
             'tsne': TSNE,
             'umap': UMAP,
-            'autoencoder': AutoencoderReducer
+            'autoencoder': AutoencoderReducer,
+            'kernel_pca': KernelPCA,
+            'lle': LLE,
+            'vae': VAEReducer,
+            'isomap': ISOMAP,
+            'laplacian_eigenmap': LaplacianEigenmap
         }
         self._fitted_models: Dict[str, BaseDimensionReducer] = {}
     
