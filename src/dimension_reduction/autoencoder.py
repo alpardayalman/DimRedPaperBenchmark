@@ -7,6 +7,7 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader, TensorDataset
 from .base import BaseDimensionReducer
+import copy
 
 if TYPE_CHECKING:
     from numpy.typing import NDArray
@@ -47,8 +48,9 @@ class Autoencoder(nn.Module):
         for hidden_dim in hidden_dims:
             encoder_layers.extend([
                 nn.Linear(prev_dim, hidden_dim),
-                nn.ReLU(),
-                nn.Dropout(dropout_rate)
+                nn.LeakyReLU(0.1),
+                nn.Dropout(dropout_rate),
+                nn.BatchNorm1d(hidden_dim)
             ])
             prev_dim = hidden_dim
         
@@ -61,8 +63,9 @@ class Autoencoder(nn.Module):
         for hidden_dim in reversed(hidden_dims):
             decoder_layers.extend([
                 nn.Linear(prev_dim, hidden_dim),
-                nn.ReLU(),
-                nn.Dropout(dropout_rate)
+                nn.LeakyReLU(0.1),
+                nn.Dropout(dropout_rate),
+                nn.BatchNorm1d(hidden_dim)
             ])
             prev_dim = hidden_dim
         
@@ -127,11 +130,11 @@ class AutoencoderReducer(BaseDimensionReducer):
         self,
         n_components: int = 2,
         random_state: Optional[int] = None,
-        hidden_dims: List[int] = [128, 64, 32],
-        learning_rate: float = 0.001,
-        batch_size: int = 32,
-        epochs: int = 100,
-        dropout_rate: float = 0.1,
+        hidden_dims: List[int] = [256, 128, 32],
+        learning_rate: float = 1e-3,
+        batch_size: int = 1024,
+        epochs: int = 300,
+        dropout_rate: float = 0.0,
         device: Optional[str] = None
     ) -> None:
         """Initialize the autoencoder reducer.
@@ -175,6 +178,7 @@ class AutoencoderReducer(BaseDimensionReducer):
         """
         X = self._validate_data(X)
         self._input_dim = X.shape[1]
+        best_loss = float("inf")
         
         # Create model
         self._model = Autoencoder(
@@ -191,7 +195,7 @@ class AutoencoderReducer(BaseDimensionReducer):
         
         # Training setup
         criterion = nn.MSELoss()
-        optimizer = optim.Adam(self._model.parameters(), lr=self.learning_rate)
+        optimizer = optim.Adam(self._model.parameters(), lr=self.learning_rate, weight_decay=1e-6)
         
         # Training loop
         self._model.train()
@@ -200,15 +204,24 @@ class AutoencoderReducer(BaseDimensionReducer):
             for batch_x, batch_y in dataloader:
                 optimizer.zero_grad()
                 encoded, decoded = self._model(batch_x)
-                loss = criterion(decoded, batch_y)
+                #loss = criterion(decoded, batch_y)
+                x_n = torch.nn.functional.normalize(batch_x, dim=1)
+                xhat_n = torch.nn.functional.normalize(decoded, dim=1)
+                cos_loss = 1.0 - (x_n * xhat_n).sum(dim=1).mean()
+                loss = cos_loss  # or loss = cos_loss + λ * mse
                 loss.backward()
                 optimizer.step()
                 total_loss += loss.item()
-            
+                
+            avg_loss = total_loss / len(dataloader)
+            if avg_loss < best_loss:
+                best_loss = avg_loss
+                best_state = copy.deepcopy(self._model.state_dict())
             if (epoch + 1) % 20 == 0:
                 avg_loss = total_loss / len(dataloader)
                 print(f"Epoch [{epoch+1}/{self.epochs}], Loss: {avg_loss:.6f}")
         
+        self._model.load_state_dict(best_state)
         self.fitted = True
         return self
     
