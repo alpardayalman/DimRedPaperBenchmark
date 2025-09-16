@@ -6,6 +6,7 @@ A comprehensive Python toolkit for dimension reduction techniques including t-SN
 
 This repository contains the code relative to [paper]. Please cite [paper] when referring to this repository.
 
+```
 @misc{DimRedPaperBenchmark:2025,
   author       = {Enis Teper, Dilge Karakaş, Serena Tomakyan and Alp Arda Yalman},
   title        = {{DimRedPaperBenchmark}},
@@ -13,6 +14,7 @@ This repository contains the code relative to [paper]. Please cite [paper] when 
   year         = {2025},
   url          = {https://github.com/alpardayalman/DimRedPaperBenchmark}
 }
+```
 
 
 ## Features
