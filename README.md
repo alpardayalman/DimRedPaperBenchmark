@@ -2,6 +2,10 @@
 
 A comprehensive Python toolkit for dimension reduction techniques including t-SNE, PCA, and UMAP, with extensive benchmarking capabilities for research papers.
 
+## Citation
+
+"This repository contains the code relative to [paper]. Please cite [paper] when referring to this repository."
+
 ## Features
 
 - **Multiple Dimension Reduction Algorithms**:
@@ -263,21 +267,6 @@ detailed_results = reducer.compare_methods(
     method_params=method_params
 )
 ```
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests
-5. Run the test suite
-6. Submit a pull request
-
-## License
-
-MIT License - see LICENSE file for details.
-
-## Citation
 
 If you use this toolkit in your research, please cite:
 
